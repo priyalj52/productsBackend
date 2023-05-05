@@ -49,14 +49,18 @@ const upload = multer({
 //store data in DB and send to frontend
 app.post('/api/products', upload.single('imageUrl'), async (req, res) => {
   const { name, price, description } = req.body;
+ 
   const imageUrl = req.file.path;
-//   console.log(imageUrl)
+  console.log(imageUrl)
   const product = new Product({ name, price, description, imageUrl });
   await product.save();
   res.json(product);
 });
-
-
+//data tp be given in form-data format
+// name:boat rockerz 
+// price:1000
+// description:Shop stylish & super bass boAt Rockerz 450 Pro Plus, the best wireless earphone. 
+// key:1
 
 //Display data
   app.get('/api/products', async (req, res) => {
@@ -64,11 +68,19 @@ app.post('/api/products', upload.single('imageUrl'), async (req, res) => {
     res.json(products);
   });
   
+  
+//Display data using ID
+  app.get('/api/products/:id', async (req, res) => {
+    const products = await Product.findById(req.params.id);
+    res.json(products);
+  });
 
 
-  //UPDATE Product with id from mongoDB of product
+  //UPDATE Product with id from mongoDB of product or from screen
   app.put('/api/products/:id', upload.single('imageUrl'), async (req, res) => {
+    // console.log(req.body)
     try {
+
       const { name, price, description } = req.body;
       let imageUrl = req.body.imageUrl;
       if (req.file) {
